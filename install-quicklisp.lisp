@@ -1728,4 +1728,4 @@ the indexes in the header accordingly."
     (format t "Quicklisp is already installed.")
     (install))
 
-(quit)
+(ccl:quit)
