@@ -20,6 +20,7 @@ git clone git@github.com:Spark-Innovations/usrv.git
 rm -rf mailinabox
 git clone https://github.com/JoshData/mailinabox.git
 
+cd usrv/scripts
 ./miab-config
 ./miab-prep
 ./miab-setup
