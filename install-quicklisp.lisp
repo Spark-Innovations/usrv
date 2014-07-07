@@ -1722,4 +1722,10 @@ the indexes in the header accordingly."
            (initial-install :client-url client-url
                             :dist-url dist-url))))))
 
-(install)
+;;; Just do the Right Thing
+
+(if (probe-file (qmerge "setup.lisp"))
+    (format t "Quicklisp is already installed.")
+    (install))
+
+(quit)
