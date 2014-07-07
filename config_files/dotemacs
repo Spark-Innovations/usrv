@@ -1,0 +1,28 @@
+
+(push "/Users/ron/.emacs.d/" load-path)
+(autoload 'python-mode "python-mode.el" "Python editing mode." t)
+(push '("\\.py$" . python-mode) auto-mode-alist)
+(push '("python" . python-mode) interpreter-mode-alist)
+
+(autoload 'javascript-mode "javascript" nil t)
+(add-to-list 'auto-mode-alist '("\\.js\\'" . javascript-mode))
+
+;; disable color crap
+(global-font-lock-mode 0)
+
+(setq enable-local-variables nil)
+
+;(setq inferior-lisp-program "the path to your Lisp system")
+;(add-to-list 'load-path "/Users/ron/devel/slime-2.0")
+;(require 'slime)
+;(slime-setup)
+
+;; Keep backups in one place
+(setq
+   backup-by-copying t      ; don't clobber symlinks
+   backup-directory-alist
+    '(("." . "~/.emacs.d/backup"))    ; don't litter my fs tree
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t)       ; use versioned backups
