@@ -57,4 +57,8 @@ ipkg dovecot-imapd
 ipkg dovecot-lmtpd
 ipkg dovecot-sqlite
 ipkg sqlite3
+
+cd ~/mailinabox
+mkdir externals
+cd externals
 apt-get download roundcube roundcube-core roundcube-sqlite3 roundcube-plugins
