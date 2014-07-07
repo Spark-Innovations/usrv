@@ -42,7 +42,8 @@ else
 fi
 EOF
 
-# ssh -t $host sudo ln -s -f /bin/bash /bin/sh
+# The default login shell on ubuntu is dash
+ssh -t $host sudo chsh -s /bin/bash ron
 ssh -t $host sudo hostname $host
 
 scp $config_files/bashrc $host:.bashrc
