@@ -12,3 +12,4 @@ cd ../..
 sudo ln -s -f /home/ron/ccl/lx86cl64 /usr/local/bin/ccl
 
 ccl -l ~/usrv/install-quicklisp.lisp
+cp ~/usrv/ccl-init.lisp ~
