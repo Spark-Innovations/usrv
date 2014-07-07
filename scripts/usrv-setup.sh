@@ -21,8 +21,8 @@ rm -rf mailinabox
 git clone https://github.com/JoshData/mailinabox.git
 
 cd usrv/scripts
-./miab-config
-./miab-prep
-./miab-setup
+sudo ./miab-config.sh
+sudo ./miab-prep.sh
+sudo ./miab-setup.sh
 
 EOF
