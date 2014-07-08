@@ -48,6 +48,7 @@ ssh -t $host sudo hostname $host
 
 scp $config_files/bashrc $host:.bashrc
 scp $config_files/dotemacs $host:.emacs
+scp $config_files/ssh-config $host:.ssh/config
 
 cat<<EOF|ssh -t $host 'cat>ipkg'
 #!/bin/sh
