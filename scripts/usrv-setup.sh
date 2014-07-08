@@ -10,6 +10,6 @@ sudo $scripts/miab-prep.sh
 sudo $scripts/miab-setup.sh
 
 sudo cp $config_files/usrv_logo.png \
- /usr/share/roundcube/skins/larry/images/roundcube_logo.png
+ /usr/local/lib/roundcubemail/skins/larry/images/roundcube_logo.png
 
 sudo cp $config_files/usrv-home.html ~user-data/www/default/index.html
