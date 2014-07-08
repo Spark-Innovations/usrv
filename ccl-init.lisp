@@ -1,4 +1,5 @@
 (load #P"~/quicklisp/setup.lisp")
+(load #P"~/ergolib/init.lisp")
 
 (defun module-provide-quicklisp (&rest args)
   (ignore-errors (apply 'ql:quickload args)))
