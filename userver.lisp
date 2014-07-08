@@ -92,19 +92,18 @@
 (defun kill-host (name)
   (bb ip (host-ip name)
       (unless ip (error "Host ~A not found" name))
+      (sed #P"~/.ssh/known_hosts" (not (or (starts-with line name)
+                                           (starts-with line ip))))
       id (host-instance-id name)
       (unless id (return (logmsg "No AWS instance found for host ~A" name)))
       (logmsg "Killing ~A" id)
-      (kill-instance id)
-      (sed #P"~/.ssh/known_hosts" (not (or (starts-with line name)
-                                           (starts-with line ip))))))
+      (kill-instance id)))
 
-(defun make-usrv-host (name)
-  (bb host (strcat name ".usrv.us")
-      ip (host-ip host)
+(defun make-usrv-host (host)
+  (bb ip (host-ip host)
       (unless ip (error "No DNS entry for ~A" host))
       (if (host-instance-id host) (error "Host ~A exists" host))
-      (logmsg "Creating ~A.usrv.us" name)
+      (logmsg "Creating ~A" host)
       instance-spec (mkinstance)
       id (ref* (tree-search-for-tag instance-spec :instanceId) 0 0 1)
       (wait-for-instance-running id)
@@ -113,61 +112,29 @@
       (logmsg "Setting up host")
       (setup-usrv-host host)))
 
+(defv $script-directory (namestring (merge-pathnames "scripts/" (this-directory))))
+
 (defun setup-usrv-host (host)
   (ensure-bash)
   (bb :fn c (&rest args) (bash (join args #\space) t)
-      (c "cd ~/devel/cloudutils/scripts")
-      (c "./setup.ec2.ubuntu" host)
-      (c "cd ~/devel/cloudutils/lisp")
-      (c "./setup.ccl" host)
-      ))
+      (c "cd" $script-directory)
+      (c "./ec2-ubuntu-setup.sh" host)
+      (c "ssh" host "./usrv/scripts/usrv-setup.sh" t)))
 
-(defun setup-miab (host)
-  (ensure-bash)
-  (bb :fn c (&rest args) (bash (join args #\space) t)
-      (c "ssh" host "ipkg git")
-      (c "ssh" host "rm -rf mailinabox")
-      (c "ssh" host "git clone https://github.com/JoshData/mailinabox.git")
-      (c "scp ~/Documents/Active/uServer/miab*" (fmt "~A:" host))
-      (c "ssh" host)
-      (c "chmod a+x ./miab*")
-      (c "mv miab* mailinabox/")
-      (c "cd mailinabox")
-      (c "sudo ./miab-prep.sh")
-      (c "logout")
-))
-
-(defun reset ()
-  (kill-host "h2.usrv.us")
+(defun reset (&optional (host "h1.usrv.us"))
+  (kill-host host)
   (bb uil (unassigned-instances)
       iid (ffst uil)
       (unless iid (error "No unassigned instances"))
-      (unless (rst uil) (mkinstance :imageid "ami-dd7709ed")) ; Keep the pipeline full
+      (unless (rst uil) (mkinstance :imageid "ami-5d5a246d")) ; Keep the pipeline full
       (wait-for-instance-running iid)
-      (assign-elastic-ip (host-ip "h2.usrv.us") iid)
+      (assign-elastic-ip (host-ip host) iid)
       (sleep 1)
-      (wait-for-ssh "h2.usrv.us")))
+      (wait-for-ssh host)))
 
 #+NIL(
 
 (reset)
-(ensure-bash)
-(bash "scp ~/Documents/Active/uServer/miab-config h2.usrv.us:mailinabox/")
-
-sudo hostname h2.usrv.us
-
-cd mailinabox
-sudo ./miab-config
-mkdir externals
-mv *.deb externals
-
-host www.google.com
-sudo apt-get -y upgrade
-host www.google.com
-
-sudo ./miab-setup.sh
-
-
 
 (save-image (host-instance-id "h2.usrv.us") "usrv4" "Usrv host 4")
 
