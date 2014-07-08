@@ -60,4 +60,5 @@ sudo chmod a+x ipkg
 sudo mv ipkg /usr/local/bin
 sudo apt-get upgrade
 ipkg emacs git
+git clone git@github.com:Spark-Innovations/usrv.git
 EOF

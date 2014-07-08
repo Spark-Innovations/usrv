@@ -2,11 +2,6 @@ my_dir="$(dirname "$0")"
 config_files=$my_dir/../config_files
 scripts=$my_dir/../scripts
 
-cd
-
-rm -rf usrv
-git clone git@github.com:Spark-Innovations/usrv.git
-
 rm -rf mailinabox
 git clone https://github.com/JoshData/mailinabox.git
 
