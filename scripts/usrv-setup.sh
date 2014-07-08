@@ -1,18 +1,8 @@
-#!/bin/bash
+my_dir="$(dirname "$0")"
+config_files=$my_dir/../config_files
+scripts=$my_dir/../scripts
 
-set -e
-
-if [ -z "$1" ]
-then
-echo 'Missing host name'
-exit -1
-fi
-
-host=$1
-
-scp ~/.ssh/config $host:.ssh/
-
-cat<<EOF | ssh -t $host
+cd
 
 rm -rf usrv
 git clone git@github.com:Spark-Innovations/usrv.git
@@ -20,9 +10,11 @@ git clone git@github.com:Spark-Innovations/usrv.git
 rm -rf mailinabox
 git clone https://github.com/JoshData/mailinabox.git
 
-cd usrv/scripts
-sudo ./miab-config.sh
-sudo ./miab-prep.sh
-sudo ./miab-setup.sh
+sudo $scripts/miab-config.sh
+sudo $scripts/miab-prep.sh
+sudo $scripts/miab-setup.sh
 
-EOF
+sudo cp $config_files/usrv_logo.png \
+ /usr/share/roundcube/skins/larry/images/roundcube_logo.png
+
+sudo cp $config_files/usrv-home.html ~user-data/www/default/index.html
