@@ -14,12 +14,14 @@ sudo cp $config_files/usrv-home.html ~user-data/www/default/index.html
 sudo cp $config_files/usrv_logo.png \
  /usr/local/lib/roundcubemail/skins/classic/images/roundcube_logo.png
 
+. /etc/mailinabox.conf
+
 # Create a configuration file.
 #
 # For security, temp and log files are not stored in the default locations
 # which are inside the roundcube sources directory. We put them instead
 # in normal places.
-cat - > /usr/local/lib/roundcubemail/config/config.inc.php <<EOF
+cat<<EOF>foo
 <?php
 /*
  * Do not edit. Written by Mail-in-a-Box. Regenerated on updates.
@@ -45,3 +47,5 @@ cat - > /usr/local/lib/roundcubemail/config/config.inc.php <<EOF
 \$config['junk_mbox'] = 'Spam';
 ?>
 EOF
+
+sudo mv foo /usr/local/lib/roundcubemail/config/config.inc.php

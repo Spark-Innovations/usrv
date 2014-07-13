@@ -3,7 +3,8 @@
 # Set up mail-in-a-box non-interactively
 
 cd ~/mailinabox
-source setup/functions.sh # load our functions
+. setup/functions.sh # load our functions
+. /etc/mailinabox.conf
 
 # Start service configuration.
 . setup/system.sh
