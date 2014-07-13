@@ -42,10 +42,6 @@ else
 fi
 EOF
 
-# The default login shell on ubuntu is dash
-ssh -t $host sudo chsh -s /bin/bash ron
-ssh -t $host sudo hostname $host
-
 scp $config_files/bashrc $host:.bashrc
 scp $config_files/dotemacs $host:.emacs
 scp $config_files/ssh-config $host:.ssh/config
@@ -56,6 +52,12 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install \$*
 EOF
 
 cat<<EOF|ssh -t $host
+# The default login shell on ubuntu is dash
+sudo chsh -s /bin/bash $user
+
+sudo hostname $host
+hostname | sudo tee /etc/hostname
+
 sudo chmod a+x ipkg
 sudo mv ipkg /usr/local/bin
 sudo apt-get update
