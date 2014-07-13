@@ -26,7 +26,5 @@ curl -s -d POSTDATA --user $(</var/lib/mailinabox/api.key): http://127.0.0.1:102
 
 # If there aren't any mail users yet, create one.
 if [ -z "`tools/mail.py user`" ]; then
-	tools/mail.py user add $EMAIL_ADDR $EMAIL_PW # will ask for password if none given
-	tools/mail.py alias add hostmaster@$PRIMARY_HOSTNAME $EMAIL_ADDR
-	tools/mail.py alias add postmaster@$PRIMARY_HOSTNAME $EMAIL_ADDR
+	tools/mail.py user add $EMAIL_ADDR $EMAIL_PW
 fi
