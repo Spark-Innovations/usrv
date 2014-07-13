@@ -119,11 +119,14 @@
       id (ref* (tree-search-for-tag instance-spec :instanceId) 0 0 1)
       (wait-for-instance-running id)
       (assign-elastic-ip ip id)
-      (wait-for-ssh host)))
+      (wait-for-ssh host)
+      (ensure-bash)
+      (bb :fn c (&rest args) (bash (join args #\space) t)
+          (c "cd" $script-directory)
+          (c "./ec2-ubuntu-setup.sh" host))))
 
 (defun make-usrv-host (host)
   (make-host host)
-  (logmsg "Setting up host")
   (setup-usrv-host host))
 
 (defv $script-directory (namestring (merge-pathnames "scripts/" (this-directory))))
@@ -132,7 +135,6 @@
   (ensure-bash)
   (bb :fn c (&rest args) (bash (join args #\space) t)
       (c "cd" $script-directory)
-      (c "./ec2-ubuntu-setup.sh" host)
       (c "ssh" host "./usrv/scripts/usrv-setup.sh" t)))
 
 (defun reset (&optional (host "h1.usrv.us"))
