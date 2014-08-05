@@ -24,6 +24,7 @@ unzip Card*
 mkdir -p pkg
 mv *.zip pkg
 
+sudo cp $config_files/nginx.local.conf /etc/nginx/conf.d/local.conf
 sudo cp $config_files/cloud.html ~user-data/www/default/
 sudo ln -s ~/caldavzap ~user-data/www/default/calendar
 sudo ln -s ~/carddavmate ~user-data/www/default/contacts
