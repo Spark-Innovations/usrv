@@ -109,6 +109,8 @@
       (logmsg "Killing ~A" id)
       (kill-instance id)))
 
+(defv $script-directory (namestring (merge-pathnames "scripts/" (this-directory))))
+
 (defun make-host (host)
   (bb ip (host-ip host)
       (unless ip (error "No DNS entry for ~A" host))
@@ -128,8 +130,6 @@
 (defun make-usrv-host (host)
   (make-host host)
   (setup-usrv-host host))
-
-(defv $script-directory (namestring (merge-pathnames "scripts/" (this-directory))))
 
 (defun setup-usrv-host (host)
   (ensure-bash)
