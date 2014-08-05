@@ -13,3 +13,13 @@ sudo cp $config_files/usrv-home.html ~user-data/www/default/index.html
 
 sudo cp $config_files/usrv_logo.png \
  /usr/local/lib/roundcubemail/skins/classic/images/roundcube_logo.png
+
+# Set up Radicale
+git clone git@github.com:Spark-Innovations/radicale.git
+wget http://www.inf-it.com/CalDavZAP_0.10.0.5.zip
+wget http://www.inf-it.com/CardDavMATE_0.11.1.zip
+ipkg unzip
+unzip Cal*
+unzip Card*
+mkdir -p pkg
+mv *.zip pkg
