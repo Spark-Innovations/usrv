@@ -21,8 +21,8 @@ sudo cp $config_files/usrv_logo.png $rcm_dir/images/roundcube_logo.png
 sudo cp $config_files/cloud.html ~user-data/www/default/
 sudo ln -s -f ~/caldavzap ~user-data/www/default/calendar
 sudo ln -s -f ~/carddavmate ~user-data/www/default/contacts
-cp $config_files/cdm-config.js ~/carddavmate/congig.js
-cp $config_files/cdz-config.js ~/caldavzap/congig.js
+cp $config_files/cdm-config.js ~/carddavmate/config.js
+cp $config_files/cdz-config.js ~/caldavzap/config.js
 
 sudo cp $config_files/rcm-login.html $rcm_dir/templates/login.html
 
