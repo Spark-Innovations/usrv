@@ -127,15 +127,15 @@
           (c "cd" $script-directory)
           (c "./ec2-ubuntu-setup.sh" host))))
 
-(defun make-usrv-host (host)
-  (make-host host)
-  (setup-usrv-host host))
-
 (defun setup-usrv-host (host)
   (ensure-bash)
   (bb :fn c (&rest args) (bash (join args #\space) t)
       (c "cd" $script-directory)
       (c "ssh" host "./usrv/scripts/usrv-setup.sh" t)))
+
+(defun make-usrv-host (host)
+  (make-host host)
+  (setup-usrv-host host))
 
 (defun reset (&optional (host "h1.usrv.us"))
   (kill-host host)
@@ -148,11 +148,75 @@
       (sleep 1)
       (wait-for-ssh host)))
 
+;;; Should go in library
+(defun ->keyword (thing) (intern (->string thing) :keyword))
+
+(defun fmt-substitute (string dictionary &optional (open-sub-char #\[) (close-sub-char #\]))
+  (bb :db (first . rest) (for s in (split string open-sub-char) collect s)
+      _ (for s in rest collect
+          (bb :db (name rest) (split s close-sub-char :max 1)
+              (strcat (ref dictionary (->keyword (string-upcase name))) rest)))
+      (apply 'strcat first _)))
+
+;;; Certificates
+
+(defv $certificate-directory (merge-pathnames "certs/" (this-directory)))
+
+(defun generate-ssl-key (name &optional (bits 2048))
+  (bash (fmt "openssl genrsa -out ~A.key ~A" name bits) t))
+
+(defun csr-subject-line (common-name &key (country "US") (state "CA") (locale "")
+                                     (organization "Spark Innovations") (group ""))
+  (strcat "/C=" country "/ST=" state "/L=" locale "/O=" organization "/OU=" group
+          "/CN=" common-name))
+
+(defun generate-certificate-authority (name &optional (days 3650))
+  (bash (fmt "openssl req -new -x509 -key ~A.key -out ~A.crt -subj ~S -days ~A"
+             name name (csr-subject-line name) days) t))
+
+(defun generate-csr (name)
+  (bash (fmt "openssl req -new -key ~A.key -out ~A.csr -subj ~S"
+             name name (csr-subject-line name))))
+
+(defun generate-certificate (name ca &optional (days 3650))
+  (bash (fmt "openssl x509 -req -days ~A -in ~A.csr -CA ~A.crt -CAkey ~A.key -CAcreateserial -out ~A.crt"
+             days name ca ca name) t))
+
+(defun key-exists? (name)
+  (probe-file (merge-pathnames (fmt "~A.key" name) (truename $certificate-directory))))
+
+(defun cert-exists? (name)
+  (probe-file (merge-pathnames (fmt "~A.crt" name) (truename $certificate-directory))))
+
+(defun gencert (host &key (ca "usrv-root") (days 3650) (renew nil))
+  (bash (fmt "cd ~A" $certificate-directory))
+  (unless (key-exists? ca)
+    (logmsg "Generating CA key")
+    (generate-ssl-key ca))
+  (unless (cert-exists? ca)
+    (logmsg "Generating CA certificate")
+    (generate-certificate-authority ca))
+  (if (key-exists? host)
+    (if renew
+      (progn
+        (logmsg "Renewing certificate for ~A" host)
+        (generate-csr host)
+        (generate-certificate host ca days))
+      (logmsg "Certificate exists.  Specify :renew t to renew it."))
+    (progn
+      (logmsg "Generating new key for ~A" host)
+      (generate-ssl-key host)
+      (generate-csr host)
+      (generate-certificate host ca days)))
+  (cert-exists? host))
+
+
 #+NIL(
 
-(reset)
+(all-usrv-hosts)
+(list-my-images)
 
-(save-image (host-instance-id "h2.usrv.us") "usrv4" "Usrv host 4")
+(save-image (host-instance-id "h2.usrv.us") "usrv1" "Usrv host image 1")
 
 (defun my-ip-address ()
   (remove-if 'whitespacep (wget "http://curlmyip.com/")))
