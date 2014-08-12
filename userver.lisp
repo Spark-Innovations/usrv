@@ -162,8 +162,21 @@
 
 (defv $certificate-directory (merge-pathnames "certs/" (this-directory)))
 
-(defun generate-ssl-key (name &optional (bits 2048))
-  (bash (fmt "openssl genrsa -out ~A.key ~A" name bits) t))
+(defun ssl-keyfile (host)
+  (probe-file (merge-pathnames (fmt "~A.key" host) (truename $certificate-directory))))
+
+(defun ssl-certfile (host)
+  (probe-file (merge-pathnames (fmt "~A.crt" host) (truename $certificate-directory))))
+
+(defun generate-ssl-key (host &key (bits 2048) (force nil))
+  (bb keyfile (ssl-keyfile host)
+      (if keyfile
+        (if force
+          (rename-file keyfile (strcat keyfile ".old") :if-exists :supersede)
+          (return (logmsg "Key exists.  Specify :force t to replace it"))))
+      (bash (fmt "openssl genrsa -out ~A.key ~A" host bits) t)
+      (bash (fmt "chmod 400 ~A" (ssl-keyfile host)) t)
+      (ssl-keyfile host)))
 
 (defun csr-subject-line (common-name &key (country "US") (state "CA") (locale "")
                                      (organization "Spark Innovations") (group ""))
@@ -182,21 +195,15 @@
   (bash (fmt "openssl x509 -req -days ~A -in ~A.csr -CA ~A.crt -CAkey ~A.key -CAcreateserial -out ~A.crt"
              days name ca ca name) t))
 
-(defun key-exists? (name)
-  (probe-file (merge-pathnames (fmt "~A.key" name) (truename $certificate-directory))))
-
-(defun cert-exists? (name)
-  (probe-file (merge-pathnames (fmt "~A.crt" name) (truename $certificate-directory))))
-
 (defun gencert (host &key (ca "usrv-root") (days 3650) (renew nil))
   (bash (fmt "cd ~A" $certificate-directory))
-  (unless (key-exists? ca)
+  (unless (ssl-keyfile ca)
     (logmsg "Generating CA key")
     (generate-ssl-key ca))
-  (unless (cert-exists? ca)
+  (unless (ssl-certfile ca)
     (logmsg "Generating CA certificate")
     (generate-certificate-authority ca))
-  (if (key-exists? host)
+  (if (ssl-keyfile host)
     (if renew
       (progn
         (logmsg "Renewing certificate for ~A" host)
@@ -208,13 +215,20 @@
       (generate-ssl-key host)
       (generate-csr host)
       (generate-certificate host ca days)))
-  (cert-exists? host))
+  (values (ssl-certfile host) (ssl-keyfile host)))
 
+(defun setup-ssl-keys (host)
+  (bb :mv (certfile keyfile) (gencert host)
+      (bash (fmt "scp ~A ~A ~A:" certfile keyfile host) t)
+      (bash (fmt "ssh ~A sudo mv ~A.crt /home/user-data/ssl/ssl_certificate.pem" host host) t)
+      (bash (fmt "ssh ~A sudo mv ~A.key /home/user-data/ssl/ssl_private_key.pem" host host) t)
+      t))
 
 #+NIL(
 
 (all-usrv-hosts)
 (list-my-images)
+(find-image "usrv1")
 
 (save-image (host-instance-id "h2.usrv.us") "usrv1" "Usrv host image 1")
 
