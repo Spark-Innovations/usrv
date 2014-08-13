@@ -237,8 +237,8 @@
       iid))
 
 (defun init-host (host)
-  (setup-ssl-keys host)
   (bash (fmt "ssh ~A sudo hostname ~A" host host)) ; Required to make sudo happy
+  (setup-ssl-keys host)
   (bash (fmt "ssh ~A 'cd usrv;git pull'" host) t)
   (bash (fmt "ssh ~A 'cd radicale; git pull'" host) t)
   (bash (fmt "ssh ~A ./usrv/scripts/host-config.sh ~A" host host) t))
