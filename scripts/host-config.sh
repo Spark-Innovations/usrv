@@ -34,10 +34,5 @@ sudo service nginx reload
 mkdir -p $cal_data
 touch $cal_data/contacts.vcf
 cp $config_files/Calendar* $cal_data
-
-# Start Radicale
-# NOTE: Radicale needs to be set up as a service, otherwise it
-# won't survive a reboot
-echo Starting radicale
-cd ~/radicale
-./run.py
+sudo ln -s -f ~/radicale/radicale.sh /etc/init.d/radicale
+sudo service radicale start
