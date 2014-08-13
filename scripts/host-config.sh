@@ -16,7 +16,7 @@ cd $config_files
 git checkout .
 sed -i "s/h1.usrv.us/$(hostname)/g" $config_files/*
 
-sudo rm -f ~user-data/www/default
+sudo rm -rf ~user-data/www/default
 sudo cp -r $www-files ~user-data/www/default
 
 sudo cp $config_files/usrv_logo.png $rcm_dir/images/roundcube_logo.png
