@@ -27,6 +27,10 @@
             (t (bash "logout")
                (ensure-bash)))))
 
+(defun reset-bash ()
+  (close $bash)
+  (ensure-bash))
+
 (defun host-ip (name)
   (ignore-errors (ipaddr-to-dotted (lookup-hostname name))))
 
@@ -61,6 +65,7 @@
 (defun wait-for-ssh (hostname)
   (bb
    :fn ssh-check () (if (ignore-errors (close (open-client-socket hostname 22))) (return t))
+   (ssh-check)
    (logmsg "Waiting for ssh daemon on ~A" hostname)
    (loop (ssh-check) (princ #\.) (sleep 1))))
 
@@ -75,7 +80,7 @@
 (defun unassigned-instances ()
   (bb usrv-hosts (all-usrv-hosts)
       (for spec in (all-aws-instances)
-        collect spec if (and (equal (3rd spec) "running")
+        collect spec if (and (member (3rd spec) '("pending" "running") :test 'equal)
                              (not (member (4th spec) usrv-hosts :test 'equal :key '2nd))))))
 
 (defun kill-unassigned-instances ()
@@ -111,7 +116,7 @@
 
 (defv $script-directory (namestring (merge-pathnames "scripts/" (this-directory))))
 
-(defun make-host (host)
+(defun make-basic-host-from-scratch (host)
   (bb ip (host-ip host)
       (unless ip (error "No DNS entry for ~A" host))
       (if (host-instance-id host) (error "Host ~A exists" host))
@@ -133,20 +138,9 @@
       (c "cd" $script-directory)
       (c "ssh" host "./usrv/scripts/usrv-setup.sh" t)))
 
-(defun make-usrv-host (host)
-  (make-host host)
+(defun make-usrv-host-from-scratch (host)
+  (make-basic-host-from-scratch host)
   (setup-usrv-host host))
-
-(defun reset (&optional (host "h1.usrv.us"))
-  (kill-host host)
-  (bb uil (unassigned-instances)
-      iid (ffst uil)
-      (unless iid (error "No unassigned instances"))
-      (unless (rst uil) (mkinstance :imageid "ami-5d5a246d")) ; Keep the pipeline full
-      (wait-for-instance-running iid)
-      (assign-elastic-ip (host-ip host) iid)
-      (sleep 1)
-      (wait-for-ssh host)))
 
 ;;; Should go in library
 (defun ->keyword (thing) (intern (->string thing) :keyword))
@@ -224,11 +218,49 @@
       (bash (fmt "ssh ~A sudo mv ~A.key /home/user-data/ssl/ssl_private_key.pem" host host) t)
       t))
 
+(defun wait-for-instance-available (instance-id)
+  (logmsg "Checking instance ~A for availability" instance-id)
+  (wait-for-instance-running instance-id)
+  (wait-for-ssh (instance-ip instance-id)))
+
+(defun allocate-host (host &optional (imageid (find-image "usrv1")))
+  (if (host-instance-id host)
+    (error "Host exists.  Use KILL-HOST to kill it first."))
+  (when (null (unassigned-instances))
+    (mkinstance :imageid imageid)
+    (mkinstance :imageid imageid))
+  (bb uil (unassigned-instances)
+      iid (ffst uil)
+      (unless (rst uil) (mkinstance :imageid imageid)) ; Keep the pipeline full
+      (wait-for-instance-available iid)
+      (assign-elastic-ip (host-ip host) iid)
+      iid))
+
+(defun init-host (host)
+  (setup-ssl-keys host)
+  (bash (fmt "ssh ~A sudo hostname ~A" host host)) ; Required to make sudo happy
+  (bash (fmt "ssh ~A 'cd usrv;git pull'" host) t)
+  (bash (fmt "ssh ~A 'cd radicale; git pull'" host) t)
+  (bash (fmt "ssh ~A ./usrv/scripts/host-config.sh ~A" host host) t))
+
+(defun reset-host (host)
+  (kill-host host)
+  (allocate-host host)
+  (init-host host))
+
+
 #+NIL(
 
 (all-usrv-hosts)
 (list-my-images)
 (find-image "usrv1")
+
+(kill-host "h2.usrv.us")
+(mkhost1 "h2.usrv.us")
+(init-host "h2.usrv.us")
+
+(require :email)
+(send-email "user@h2.usrv.us" "Test" "Test 123")
 
 (save-image (host-instance-id "h2.usrv.us") "usrv1" "Usrv host image 1")
 
