@@ -7,6 +7,7 @@ fi
 sudo hostname $1
 
 config_files=~/usrv/config_files
+www_files=~/usrv/www
 rcm_dir=/usr/local/lib/roundcubemail/skins/classic
 cal_data=~/radicale/data/user
 
@@ -15,7 +16,8 @@ cd $config_files
 git checkout .
 sed -i "s/h1.usrv.us/$(hostname)/g" $config_files/*
 
-sudo cp $config_files/usrv-home.html ~user-data/www/default/index.html
+sudo rm -f ~user-data/www/default
+sudo cp -r $www-files ~user-data/www/default
 
 sudo cp $config_files/usrv_logo.png $rcm_dir/images/roundcube_logo.png
 
