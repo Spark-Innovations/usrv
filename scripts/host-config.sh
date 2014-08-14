@@ -38,3 +38,6 @@ touch $cal_data/contacts.vcf
 cp $config_files/Calendar* $cal_data
 sudo ln -s -f ~/radicale/radicale.sh /etc/init.d/radicale
 sudo service radicale start
+
+# Configure firewall to allow access to auth port
+sudo ufw allow 9443

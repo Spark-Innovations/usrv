@@ -1,0 +1,16 @@
+<script>
+function setCookie(cname, cvalue) {
+    document.cookie = cname + "=" + cvalue + "; Secure;";
+}
+
+function login() {
+  setCookie('FOO', 'PASS');
+  document.location = "https://" + window.location.hostname;
+}
+
+window.onload=login;
+</script>
+
+<noscript>
+This page requires Javascript
+</noscript>
