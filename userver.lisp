@@ -88,22 +88,9 @@
     (logmsg "Killing ~A" spec)
     (kill-instance (1st spec))))
 
-(defmacro sed (path rule)
-  `(bb lines (for line in (lines ,path) collect line if ,rule)
-       (with-open-file (f ,path :direction :output :if-exists :supersede)
-         (for line in lines do
-           (write-sequence line f)
-           (terpri f)))
-       (values)))
-
-(require :cl-ppcre)
-(defun grep (path regex)
-  (bb s (cl-ppcre:create-scanner regex)
-      (for line in (lines path) collect line if (cl-ppcre:scan s line))))
-
 (defun remove-from-known-hosts (host &optional (ip (host-ip host)))
-  (sed #P"~/.ssh/known_hosts" (not (or (starts-with line host)
-                                       (starts-with line ip)))))
+  (bash (fmt "ssh-keygen -R ~A" host) t)
+  (bash (fmt "ssh-keygen -R ~A" ip) t))
 
 (defun kill-host (name)
   (bb ip (host-ip name)
@@ -251,7 +238,7 @@
   (bash (fmt "ssh ~A 'cd usrv;git pull'" host) t)
   (bash (fmt "ssh ~A 'cd radicale; git pull'" host) t)
   (bash (fmt "ssh ~A 'cd ergolib; git pull'" host) t)
-  (bash (fmt "ssh ~A ./usrv/scripts/host-config.sh ~A" host host) t))
+  (bash (fmt "ssh ~A ./usrv/scripts/host-config.sh" host) t))
 
 (defun reset-host (host)
   (reset-bash)
@@ -273,10 +260,22 @@
 (require :email)
 (send-email "user@h2.usrv.us" "Test" "Test 123")
 
-(save-image (host-instance-id "h2.usrv.us") "usrv1" "Usrv host image 1")
-
 (defun my-ip-address ()
   (remove-if 'whitespacep (wget "http://curlmyip.com/")))
 
 (my-ip-address)
+
+(defmacro sed (path rule)
+  `(bb lines (for line in (lines ,path) collect line if ,rule)
+       (with-open-file (f ,path :direction :output :if-exists :supersede)
+         (for line in lines do
+           (write-sequence line f)
+           (terpri f)))
+       (values)))
+
+(require :cl-ppcre)
+(defun grep (path regex)
+  (bb s (cl-ppcre:create-scanner regex)
+      (for line in (lines path) collect line if (cl-ppcre:scan s line))))
+
 )

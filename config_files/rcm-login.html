@@ -32,7 +32,7 @@ window.onload = function () {
        rcmail.env.action == ''
       // && document.getElementById('rcmloginuser').value != ''
      ) {
-    document.getElementById('rcmloginuser').value = 'user@h1.usrv.us';
+    document.getElementById('rcmloginuser').value = 'user@{HOSTNAME}';
     document.getElementById('rcmloginpwd').value = 'pass';
     document.forms['form'].submit();
   }

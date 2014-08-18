@@ -1,10 +1,3 @@
-if [ -z "$1" ]
-then
-echo 'Missing host name'
-exit -1
-fi
-
-sudo hostname $1
 
 config_files=~/usrv/config_files
 www_files=~/usrv/www
@@ -15,7 +8,7 @@ LN='sudo ln -s -f'
 # Change host name in config files
 cd $config_files
 git checkout .
-sed -i "s/h1.usrv.us/$(hostname)/g" $config_files/*
+sed -i "s/{HOSTNAME}/$(hostname)/g" $config_files/*
 
 $LN $www_files ~user-data/www/default
 $LN $config_files/usrv_logo.png $rcm_dir/images/roundcube_logo.png

@@ -42,19 +42,19 @@ function init_settings() {
 }
 
 var globalAccountSettings=[{
- href: 'https://h2.usrv.us/carddav/user/',
- userAuth: {userName: '', userPassword: ''},
- hrefLabel: null,
- crossDomain: null,  // null=autodetect
- forceReadOnly: null,
- withCredentials: false,
- showHeader: true,
- settingsAccount: true,
- checkContentType: true,
- syncInterval: 60000,
- timeOut: 30000,
- lockTimeOut: 10000,
- delegation: false
+  href: 'https://{HOSTNAME}/carddav/user/',
+  userAuth: {userName: '', userPassword: ''},
+  hrefLabel: null,
+  crossDomain: null,  // null=autodetect
+  forceReadOnly: null,
+  withCredentials: false,
+  showHeader: true,
+  settingsAccount: true,
+  checkContentType: true,
+  syncInterval: 60000,
+  timeOut: 30000,
+  lockTimeOut: 10000,
+  delegation: false
 }];
 
 init_settings();

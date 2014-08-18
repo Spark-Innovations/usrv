@@ -42,37 +42,22 @@ function init_settings() {
   userauth.userPassword = l[1];
 }
 
-var globalAccountSettings=[
-{href: 'https://h2.usrv.us/caldav/user/',
- hrefLabel: null,
- forceReadOnly: null,
- showHeader: true,
- settingsAccount: true,
- checkContentType: true,
- userAuth: {userName: '', userPassword: ''},
- timeOut: 30000,
- lockTimeOut: 10000,
- delegation: false,
- ignoreAlarms: false,
- backgroundCalendars: []}];
+var globalAccountSettings=[{
+  href: 'https://{HOSTNAME}/caldav/user/',
+  hrefLabel: null,
+  forceReadOnly: null,
+  showHeader: true,
+  settingsAccount: true,
+  checkContentType: true,
+  userAuth: {userName: '', userPassword: ''},
+  timeOut: 30000,
+  lockTimeOut: 10000,
+  delegation: false,
+  ignoreAlarms: false,
+  backgroundCalendars: []
+}];
 
 init_settings();
-
-/*
-var _globalNetworkCheckSettings={
- href: 'https://h2.usrv.us/caldav/',
- hrefLabel: null,
- additionalResources: [],
- forceReadOnly: null,
- showHeader: true,
- settingsAccount: true,
- timeOut: 30000,
- lockTimeOut: 10000,
- delegation: false,
- backgroundCalendars: [],
- ignoreAlarms: false
-}
-*/
 
 // NOTE: see readme.txt before you start to configure this client!
 
