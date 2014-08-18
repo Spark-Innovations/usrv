@@ -10,7 +10,7 @@ cd $config_files
 git checkout .
 sed -i "s/{HOSTNAME}/$(hostname)/g" $config_files/*
 
-rm -rf ~user-data/www/default
+sudo rm -rf ~user-data/www/default
 $LN $www_files ~user-data/www/default
 $LN $config_files/usrv_logo.png $rcm_dir/images/roundcube_logo.png
 $LN $config_files/rcm-login.html $rcm_dir/templates/login.html
