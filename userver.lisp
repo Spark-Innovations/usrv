@@ -234,6 +234,8 @@
 (defun init-host (host)
   (logmsg "Setting up host")
   (bash (fmt "ssh ~A sudo hostname ~A" host host) t) ; Required to make sudo happy
+  (unless (equal (bash (fmt "ssh ~A hostname" host)) (list host))
+    (error "Setting host name failed"))
   (setup-ssl-keys host)
   (bash (fmt "ssh ~A 'cd usrv;git pull'" host) t)
   (bash (fmt "ssh ~A 'cd radicale; git pull'" host) t)
