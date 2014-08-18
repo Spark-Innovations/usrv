@@ -16,9 +16,34 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i].trim();
+        if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+    }
+    return "";
+}
+
+function init_settings() {
+  var req = new XMLHttpRequest();
+  req.open("GET", "/tickets/" + getCookie('USRV_TICKET'), false);
+  req.send();
+  if (req.status != 200) {
+    document.location = '/public/forbidden';
+    return;
+  }
+  var l = req.responseText.trim().split(':');
+  var userauth = globalAccountSettings[0].userAuth;
+  userauth.userName = l[0];
+  userauth.userPassword = l[1];
+}
+
 var globalAccountSettings=[{
- href: 'https://h1.usrv.us/carddav/user/',
- userAuth: {userName: 'user', userPassword: 'pass'},
+ href: 'https://h2.usrv.us/carddav/user/',
+ userAuth: {userName: '', userPassword: ''},
  hrefLabel: null,
  crossDomain: null,  // null=autodetect
  forceReadOnly: null,
@@ -32,23 +57,8 @@ var globalAccountSettings=[{
  delegation: false
 }];
 
-/*
-var _globalNetworkCheckSettings={
- href: 'https://h1.usrv.us/carddav/',
- hrefLabel: null,
- crossDomain: null,  // null=autodetect
- additionalResources: [],
- forceReadOnly: null,
- withCredentials: false,
- showHeader: true,
- settingsAccount: true,
- checkContentType: true,
- syncInterval: 60000,
- timeOut: 30000,
- lockTimeOut: 10000,
- delegation: false
-};
-*/
+init_settings();
+
 
 // globalAccountSettings must be an array (can be undefined if you use globalNetworkCheckSettings or globalNetworkAccountSettings)
 //  the href value is a "principal URL" - the last character in href must be '/'
