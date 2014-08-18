@@ -1,10 +1,10 @@
 # Set up CCL
 
-ipkg emacs gcc make m4 python subversion libc6-dev
+ipkg emacs gcc make m4 python subversion libc6-dev rlwrap
 
 cd
 # svn co http://svn.clozure.com/publicsvn/openmcl/trunk/linuxx86/ccl
-svn co http://svn.clozure.com/publicsvn/openmcl/release/1.8/linuxx86/ccl
+svn co http://svn.clozure.com/publicsvn/openmcl/release/1.9/linuxx86/ccl
 
 # Rebuild CCL kernel
 # cd ~/ccl/lisp-kernel/linuxx8664
@@ -18,5 +18,5 @@ sudo ln -s -f /home/ron/ccl/lx86cl64 /usr/local/bin/ccl
 
 cd ~
 git clone git@github.com:Spark-Innovations/ergolib.git
-ccl -i -l ~/usrv/install-quicklisp.lisp
+ccl -n -l ~/usrv/install-quicklisp.lisp
 cp ~/usrv/ccl-init.lisp ~
