@@ -26,3 +26,5 @@ unzip Cal*
 unzip Card*
 mkdir -p pkg
 mv *.zip pkg
+
+echo USRV base image created on $(date) > TIMESTAMP
