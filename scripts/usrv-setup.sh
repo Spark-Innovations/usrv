@@ -10,9 +10,6 @@ sudo $scripts/miab-config.sh
 sudo $scripts/miab-prep.sh
 sudo $scripts/miab-setup.sh
 
-echo 'This is an unconfigured usrv host image'
-sudo mv foo ~user-data/www/default/index.html
-
 # Set up Radicale
 git clone git@github.com:Spark-Innovations/radicale.git
 sudo touch /var/log/radicale
@@ -28,3 +25,4 @@ mkdir -p pkg
 mv *.zip pkg
 
 echo USRV base image created on $(date) > TIMESTAMP
+sudo cp TIMESTAMP ~user-data/www/default/index.html
