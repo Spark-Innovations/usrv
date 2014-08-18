@@ -43,8 +43,8 @@
       (logmsg "Killing instance ~A" spec)
       (kill-instance (1st spec)))))
 
-(defun open-client-socket (host port)
-  (make-socket :type :stream :remote-host host :remote-port port))
+(defun open-client-socket (host port &optional (timeout 5))
+  (make-socket :type :stream :remote-host host :remote-port port :connect-timeout timeout))
 
 (defun kwd (thing)
   (if (keywordp thing)
@@ -64,10 +64,14 @@
 
 (defun wait-for-ssh (hostname)
   (bb
-   :fn ssh-check () (if (ignore-errors (close (open-client-socket hostname 22))) (return t))
-   (ssh-check)
+   :fn check1 () (if (ignore-errors (close (open-client-socket hostname 22))) (return t))
+   (check1)
    (logmsg "Waiting for ssh daemon on ~A" hostname)
-   (loop (ssh-check) (princ #\.) (sleep 1))))
+   (loop (check1) (princ #\.) (sleep 1))
+   :fn check2 () (if (equal (bash (fmt "ssh ~A echo foo" hostname)) '("foo")) (return t))
+   (check2)
+   (logmsg "SSH socket connection OK, waiting for SSH daemon to respond")
+   (loop (check2) (princ #\.) (sleep 1))))
 
 (defun all-usrv-hosts ()
   (bb l (live (list-dns-records "usrv.us"))
@@ -213,7 +217,7 @@
   (wait-for-instance-running instance-id)
   (wait-for-ssh (instance-ip instance-id)))
 
-(defun allocate-host (host &optional (image-name "usrv2"))
+(defun allocate-host (host &optional (image-name "usrv3"))
   (bb image-id (find-image image-name)
       (if (null image-id) (error "Unknown image: ~A" image-name))
       ip (host-ip host)
@@ -229,11 +233,13 @@
       (wait-for-instance-available iid)
       (logmsg "Host is running, assigning IP address")
       (assign-elastic-ip ip iid)
+      (wait-for-ssh host)
       iid))
 
 (defun init-host (host)
   (logmsg "Setting up host")
-  (bash (fmt "ssh ~A sudo hostname ~A" host host) t) ; Required to make sudo happy
+  (bash (fmt "ssh ~A echo Setting up host" host) t)
+  (bash (fmt "ssh ~A sudo hostname ~A" host host)) ; Required to make sudo happy
   (unless (equal (bash (fmt "ssh ~A hostname" host)) (list host))
     (error "Setting host name failed"))
   (setup-ssl-keys host)
