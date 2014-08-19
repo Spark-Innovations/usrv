@@ -7,6 +7,13 @@ LN='sudo ln -s -f'
 host=$(hostname)
 user=$(whoami)
 
+# For add-user, should go in usrv-setup
+ipkg pwgen
+
+# Set up MIAB for this host
+sudo ./miab-config.sh
+sudo ~/mailinabox/tools/mail.py user remove user@h2.usrv.us
+
 # Change host name in config files
 cd $config_files
 git checkout .
@@ -30,7 +37,5 @@ sudo service nginx reload
 sudo ln -s -f ~/radicale/radicale.sh /etc/init.d/radicale
 sudo service radicale start
 
-# For add-user, should go in usrv-setup
-sudo apt-get install pwgen
-
-sudo ./miab-config.sh
+# Add a user (for testing only at the moment)
+./add-user $user
