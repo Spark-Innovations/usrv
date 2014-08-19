@@ -217,7 +217,7 @@
   (wait-for-instance-running instance-id)
   (wait-for-ssh (instance-ip instance-id)))
 
-(defun allocate-host (host &optional (image-name "usrv3"))
+(defun allocate-host (host &optional (image-name "usrv4"))
   (bb image-id (find-image image-name)
       (if (null image-id) (error "Unknown image: ~A" image-name))
       ip (host-ip host)
@@ -225,11 +225,11 @@
       (if (host-instance-id host)
         (error "Host exists.  Use KILL-HOST to kill it first."))
       (when (null (unassigned-instances))
-        (mkinstance :image-id image-id)
-        (mkinstance :image-id image-id))
+        (logmsg "No unassigned instances, making a new one")
+        (wait-for-instance-running (make-aws-instance image-id)))
       uil (unassigned-instances)
       iid (ffst uil)
-      (unless (rst uil) (mkinstance :image-id image-id)) ; Keep the pipeline full
+      (unless (rst uil) (make-aws-instance image-id)) ; Keep the pipeline full
       (wait-for-instance-available iid)
       (logmsg "Host is running, assigning IP address")
       (assign-elastic-ip ip iid)
@@ -243,9 +243,10 @@
   (unless (equal (bash (fmt "ssh ~A hostname" host)) (list host))
     (error "Setting host name failed"))
   (setup-ssl-keys host)
-  (bash (fmt "ssh ~A 'cd usrv;git pull'" host) t)
+  (bash (fmt "ssh ~A 'cd usrv; git pull'" host) t)
   (bash (fmt "ssh ~A 'cd radicale; git pull'" host) t)
   (bash (fmt "ssh ~A 'cd ergolib; git pull'" host) t)
+(bash (fmt "ssh ~A cd usrv; git checkout 55c601d7" host) t)
   (bash (fmt "ssh ~A ./usrv/scripts/host-config.sh" host) t))
 
 (defun reset-host (host)
