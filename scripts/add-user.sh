@@ -1,3 +1,4 @@
+set -e
 
 if [ -z "$1" ]
 then
@@ -11,6 +12,7 @@ pwd=$(pwgen -0 -A 12 1)
 ticket=$(pwgen -s 20 1)
 echo $user:$pwd > ~/usrv/www/tickets/$ticket
 echo $user:$pwd >> ~/radicale/htpasswd
+mkdir -p ~/radicale/data
 cd ~/radicale/data
 mkdir $user
 cp ~/usrv/config_files/Calendar* $user/

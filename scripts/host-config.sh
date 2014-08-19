@@ -1,3 +1,4 @@
+set -e
 
 config_files=~/usrv/config_files
 www_files=~/usrv/www
@@ -31,3 +32,5 @@ sudo service radicale start
 
 # For add-user, should go in usrv-setup
 sudo apt-get install pwgen
+
+sudo ./miab-config.sh
