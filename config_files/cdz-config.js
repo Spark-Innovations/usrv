@@ -37,13 +37,14 @@ function init_settings() {
     return;
   }
   var l = req.responseText.trim().split(':');
-  var userauth = globalAccountSettings[0].userAuth;
-  userauth.userName = l[0];
-  userauth.userPassword = l[1];
+  var settings = globalAccountSettings[0]
+  settings.href = ''https://' + window.location.host + '/carddav/' + l[0] + '/';
+  settings.userAuth.userName = l[0];
+  settings.userAuth.userPassword = l[1];
 }
 
 var globalAccountSettings=[{
-  href: 'https://{HOSTNAME}/caldav/user/',
+  href: '',
   hrefLabel: null,
   forceReadOnly: null,
   showHeader: true,

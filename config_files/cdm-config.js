@@ -16,7 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
@@ -36,13 +35,14 @@ function init_settings() {
     return;
   }
   var l = req.responseText.trim().split(':');
-  var userauth = globalAccountSettings[0].userAuth;
-  userauth.userName = l[0];
-  userauth.userPassword = l[1];
+  var settings = globalAccountSettings[0]
+  settings.href = ''https://' + window.location.host + '/carddav/' + l[0] + '/';
+  settings.userAuth.userName = l[0];
+  settings.userAuth.userPassword = l[1];
 }
 
 var globalAccountSettings=[{
-  href: 'https://{HOSTNAME}/carddav/user/',
+  href: '',
   userAuth: {userName: '', userPassword: ''},
   hrefLabel: null,
   crossDomain: null,  // null=autodetect
