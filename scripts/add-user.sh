@@ -14,5 +14,5 @@ echo $user:$pwd >> ~/radicale/htpasswd
 cd ~/radicale/data
 mkdir $user
 cp ~/usrv/config_files/Calendar* $user/
-sudo ~/mailinabo/tools/mail.py user add ${user}@$(hostname) $pwd
+sudo ~/mailinabox/tools/mail.py user add ${user}@$(hostname) $pwd
 echo Ticket for $user is $ticket
