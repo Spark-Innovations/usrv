@@ -1,18 +1,19 @@
 set -e
 
 config_files=~/usrv/config_files
+scripts=~/usrv/scripts
+miab=~/mailinabox/tools/mail.py
 www_files=~/usrv/www
 rcm_dir=/usr/local/lib/roundcubemail/skins/classic
 LN='sudo ln -s -f'
 host=$(hostname)
-user=$(whoami)
 
 # For add-user, should go in usrv-setup
 ipkg pwgen
 
 # Set up MIAB for this host
-sudo ./miab-config.sh
-sudo ~/mailinabox/tools/mail.py user remove user@h2.usrv.us
+sudo $scripts/miab-config.sh
+sudo $miab user remove user@h2.usrv.us
 
 # Change host name in config files
 cd $config_files
@@ -38,4 +39,4 @@ sudo ln -s -f ~/radicale/radicale.sh /etc/init.d/radicale
 sudo service radicale start
 
 # Add a user (for testing only at the moment)
-./add-user $user
+./add-user ron
