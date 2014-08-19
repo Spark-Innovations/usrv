@@ -7,11 +7,12 @@ fi
 
 user = $1
 echo Setting up user $user
-pwd1 = $(pwgen -0 -A 12 1)
-pwd2 = $(pwgen -s 20 1)
-echo $user:$pwd1 > ~/usrv/www/tickets/$pwd2
-echo $user:$pwd1 >> ~/radicale/htpasswd
+pwd = $(pwgen -0 -A 12 1)
+ticket = $(pwgen -s 20 1)
+echo $user:$pwd > ~/usrv/www/tickets/$ticket
+echo $user:$pwd >> ~/radicale/htpasswd
 cd ~/radicale/data
 mkdir $user
 cp $config_files/Calendar* $user/
 sudo ./tools/mail.py user add user1@$(hostname) passwd1
+echo Ticket for $user is $ticket
