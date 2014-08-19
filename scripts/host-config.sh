@@ -38,4 +38,4 @@ sudo service radicale start
 # Add a user (for testing only at the moment)
 sudo sqlite3 ~user-data/mail/users.sqlite 'delete from users'
 sudo sqlite3 ~user-data/mail/users.sqlite 'delete from aliases'
-./add-user ron
+$scripts/add-user ron
