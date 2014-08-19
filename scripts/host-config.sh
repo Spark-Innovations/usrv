@@ -5,6 +5,7 @@ rcm_dir=/usr/local/lib/roundcubemail/skins/classic
 cal_data=~/radicale/data/user
 LN='sudo ln -s -f'
 host=$(hostname)
+user=$(whoami)
 
 # Change host name in config files
 cd $config_files
@@ -36,5 +37,5 @@ sudo service radicale start
 mkdir ~/mail
 sudo mv ~user-data/mail/users.sqlite ~/mail/users.sqlite
 $LN ~/mail/users.sqlite ~user-data/mail/users.sqlite
-sudo chown $(whoami) ~/mail/users.sqlite
+sudo chown $user ~/mail/users.sqlite
 ./email-config.py
