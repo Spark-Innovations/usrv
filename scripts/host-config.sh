@@ -2,7 +2,6 @@
 config_files=~/usrv/config_files
 www_files=~/usrv/www
 rcm_dir=/usr/local/lib/roundcubemail/skins/classic
-cal_data=~/radicale/data/user
 LN='sudo ln -s -f'
 host=$(hostname)
 user=$(whoami)
@@ -26,19 +25,9 @@ $LN $config_files/cdm-config.js ~/carddavmate/config.js
 $LN $config_files/nginx.local.conf /etc/nginx/conf.d/local.conf
 sudo service nginx reload
 
-# Create radicale data
-mkdir -p $cal_data
-touch $cal_data/contacts.vcf
-cp $config_files/Calendar* $cal_data
+# Configure radicale
 sudo ln -s -f ~/radicale/radicale.sh /etc/init.d/radicale
 sudo service radicale start
 
-# Set up initial user accounts
-mkdir ~/mail
-sudo mv ~user-data/mail/users.sqlite ~/mail/users.sqlite
-$LN ~/mail/users.sqlite ~user-data/mail/users.sqlite
-sudo chown $user ~/mail/users.sqlite
-
-scripts=~/usrv/scripts
-cd $scripts
-./email_config.py
+# For add-user, should go in usrv-setup
+sudo apt-get install pwgen
