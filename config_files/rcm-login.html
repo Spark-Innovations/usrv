@@ -46,7 +46,7 @@ window.onload = function () {
   }
   var l = req.responseText.trim().split(':');
   if (document.URL.slice(-6) != 'logout') {
-    $$('rcmloginuser').value = l[0]+'@h2.usrv.us';
+    $$('rcmloginuser').value = l[0]+'@{HOSTNAME}';
     $$('rcmloginpwd').value = l[1];
     document.forms['form'].submit();
   }
