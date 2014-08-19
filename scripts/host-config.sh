@@ -38,4 +38,7 @@ mkdir ~/mail
 sudo mv ~user-data/mail/users.sqlite ~/mail/users.sqlite
 $LN ~/mail/users.sqlite ~user-data/mail/users.sqlite
 sudo chown $user ~/mail/users.sqlite
-./email-config.py
+
+scripts=~/usrv/scripts
+cd $scripts
+./email_config.py
