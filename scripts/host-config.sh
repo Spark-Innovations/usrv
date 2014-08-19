@@ -36,5 +36,5 @@ sudo service radicale start
 mkdir ~/mail
 sudo mv ~user-data/mail/users.sqlite ~/mail/users.sqlite
 $LN ~/mail/users.sqlite ~user-data/mail/users.sqlite
-sudo chown $(whoami) ~/users.sqlite
+sudo chown $(whoami) ~/mail/users.sqlite
 ./email-config.py
