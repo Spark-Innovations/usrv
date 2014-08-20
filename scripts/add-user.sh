@@ -26,6 +26,7 @@ sudo $miab user add $user@$host $passwd
 
 # This needs to be done every time we add a new user until I can
 # write a proper user add script
+config_files=~/usrv/config_files
 sudo cp $config_files/nginx.local.conf /etc/nginx/conf.d/local.conf
 sudo service nginx reload
 

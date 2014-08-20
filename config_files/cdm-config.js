@@ -36,7 +36,7 @@ function init_settings() {
   }
   var l = req.responseText.trim().split(':');
   var settings = globalAccountSettings[0]
-  settings.href = ''https://' + window.location.host + '/carddav/' + l[0] + '/';
+  settings.href = 'https://' + window.location.host + '/carddav/' + l[0] + '/';
   settings.userAuth.userName = l[0];
   settings.userAuth.userPassword = l[1];
 }
