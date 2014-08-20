@@ -28,8 +28,9 @@ $LN ~/carddavmate $www_files/contacts
 $LN $config_files/cdz-config.js ~/caldavzap/config.js
 $LN $config_files/cdm-config.js ~/carddavmate/config.js
 
-$LN $config_files/nginx.local.conf /etc/nginx/conf.d/local.conf
-sudo service nginx reload
+# This doesn't work because mailinabox will stomp on it
+# $LN $config_files/nginx.local.conf /etc/nginx/conf.d/local.conf
+# sudo service nginx reload
 
 # Configure radicale
 sudo ln -s -f ~/radicale/radicale.sh /etc/init.d/radicale
@@ -38,4 +39,4 @@ sudo service radicale start
 # Add a user (for testing only at the moment)
 sudo sqlite3 ~user-data/mail/users.sqlite 'delete from users'
 sudo sqlite3 ~user-data/mail/users.sqlite 'delete from aliases'
-$scripts/add-user ron
+$scripts/add-user.sh ron
