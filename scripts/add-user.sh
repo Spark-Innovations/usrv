@@ -30,4 +30,4 @@ config_files=~/usrv/config_files
 sudo cp $config_files/nginx.local.conf /etc/nginx/conf.d/local.conf
 sudo service nginx reload
 
-echo Ticket for $user is https://$host/public/login?$ticket=
+echo Ticket for $user is https://$host/public/login.html?$ticket=
