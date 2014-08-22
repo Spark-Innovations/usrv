@@ -5,6 +5,10 @@
 <script>
 document.cookie = "USRV_TICKET=; path=/; Max-age=0;";
 document.cookie = "USRV_TICKET=; path=/; Max-age=0; Secure;";
+
+var req = new XMLHttpRequest();
+req.open("GET", "/mail?_task=logout", true);
+req.send();
 </script>
 
 Logout successful
