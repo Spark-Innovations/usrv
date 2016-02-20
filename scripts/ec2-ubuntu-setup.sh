@@ -63,5 +63,13 @@ sudo mv ipkg /usr/local/bin
 sudo apt-get update
 sudo apt-get -y upgrade
 ipkg emacs git
-git clone git@github.com:Spark-Innovations/usrv.git
 EOF
+
+# Warning! This opens a short-lived security hole, but this should
+# be OK because we've just this server up so the hackers should not have
+# compromised it yet.
+#
+# See https://lyte.id.au/2012/03/19/ssh-agent-forwarding-is-a-bug/
+#
+ssh $host rm -rf usrv  # Make it idempotent
+ssh -A $host git clone git@github.com:Spark-Innovations/usrv.git
