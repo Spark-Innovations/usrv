@@ -4,7 +4,7 @@ ipkg emacs gcc make m4 python subversion libc6-dev rlwrap
 
 cd
 # svn co http://svn.clozure.com/publicsvn/openmcl/trunk/linuxx86/ccl
-svn co http://svn.clozure.com/publicsvn/openmcl/release/1.9/linuxx86/ccl
+svn co http://svn.clozure.com/publicsvn/openmcl/release/1.10/linuxx86/ccl
 
 # Rebuild CCL kernel
 # cd ~/ccl/lisp-kernel/linuxx8664
